@@ -1,0 +1,284 @@
+<!-- Page Content -->
+<%@ include file="/jspf/directive/taglib.jspf"%>
+<div class="container" style="padding-top: 20px;">
+	<h1 class="page-header">Profile</h1>
+	<div class="row">
+		<!-- left column -->
+		<div class="col-md-4 col-sm-6 col-xs-12">
+			<div class="text-center">
+				<c:if test="${not empty photoOfUser}">
+					<img src="${photoOfUser}" class="avatar img-circle img-thumbnail"
+						alt="avatar">
+				</c:if>
+				<c:if test="${empty photoOfUser}">
+					<img
+						src="${pageContext.request.contextPath}/resources/img/user_no_name.png"
+						class="avatar img-circle img-thumbnail" alt="avatar">
+				</c:if>
+				<form method="post"
+					action="${pageContext.request.contextPath}\Controller">
+					<input type="hidden" name="command" value="loadPhoto" />
+
+					<div class="well well-sm">
+						<h6>Upload a different photo...</h6>
+						<input type="file" name="fileInput" id="fileInput"
+							class="text-center center-block" />
+
+					</div>
+
+
+					<input type="submit" class="btn btn-primary btn-lg btn-block"
+						value="Save new photo!" disabled />
+				</form>
+			</div>
+		</div>
+		<!-- edit form column -->
+		<div class="col-md-8 col-sm-6 col-xs-12 personal-info">
+			<div class="alert alert-info alert-dismissable">
+				<a class="panel-close close" data-dismiss="alert"></a> <i
+					class="fa fa-coffee"></i>
+				<p>User info.</p>
+				<c:if test="${ not empty mailConfirmed}">
+					<p>${mailConfirmed}</p>
+				</c:if>
+
+			</div>
+			<h3>Personal info</h3>
+
+			<c:if test="${empty param.editMode}">
+				<fieldset disabled="disabled">
+			</c:if>
+			<c:if test="${not empty param.editMode}">
+				<fieldset>
+			</c:if>
+
+			<form class="form-horizontal" role="form">
+				<div class="form-group">
+					<label class="col-lg-3 control-label"><fmt:message
+							key="first_name" />:</label>
+					<div class="col-lg-8">
+						<input class="form-control" value="${user_info_object.firstName}"
+							type="text">
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-lg-3 control-label"><fmt:message
+							key="last_name" />:</label>
+					<div class="col-lg-8">
+						<input class="form-control" value="${user_info_object.lastName}"
+							type="text">
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-lg-3 control-label"><fmt:message
+							key="mail" />:</label>
+					<div class="col-lg-8">
+						<input class="form-control" value="${user_info_object.email}"
+							type="text">
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-md-3 control-label"><fmt:message
+							key="login" />:</label>
+					<div class="col-md-8">
+						<input class="form-control" value="${user_info_object.login}"
+							type="text">
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-md-3 control-label"><fmt:message
+							key="confirm_password" />:</label>
+					<div class="col-md-8">
+						<input class="form-control" value="11111122333" type="password">
+					</div>
+				</div>
+				<c:if test="${not empty param.editMode}">
+
+					<div class="form-group">
+						<label class="col-md-3 control-label"></label>
+						<div class="col-md-8">
+							<input class="btn btn-primary" value="Save Changes" type="button">
+							<span></span> <input class="btn btn-default" value="Cancel"
+								type="reset">
+						</div>
+					</div>
+				</c:if>
+			</form>
+			</fieldset>
+
+			<form class="form-horizontal" role="form">
+				<div class="form-group">
+					<label class="col-lg-3 control-label"><fmt:message
+							key="verificated" />:</label>
+					<div class="col-lg-8">
+						<c:if test="${not user_info_object.isVerified}">
+							<button type="button"
+								class="btn btn-primary btn-block btn-warning">
+								<fmt:message key="verificate" />
+								!
+							</button>
+
+							<div class="form-group">
+								<a
+									href="${pageContext.request.contextPath}/Controller?command=verificateMail&action=send"
+									class="btn btn-primary  btn-info" role="button"><fmt:message
+										key="send_mail" />!</a>
+							</div>
+						</c:if>
+
+						<c:if test="${user_info_object.isVerified}">
+
+							<button type="button"
+								class="btn btn-primary btn-block btn-success disabled">
+								<fmt:message key="verificated" />
+							</button>
+						</c:if>
+					</div>
+				</div>
+			</form>
+
+		</div>
+	</div>
+
+
+	<div>
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				<fmt:message key="tests_history" />
+
+			</div>
+			<div class="panel-body">
+				<div class="well well-lg">
+					<table class="table">
+						<thead class="thead-default">
+							<tr>
+								<th>#</th>
+								<th><fmt:message key="test_name" /></th>
+								<th><fmt:message key="test_result" /></th>
+								<th><fmt:message key="pass_date" /></th>
+								<th><fmt:message key="subject" /></th>
+								<th><fmt:message key="difficulty" /></th>
+							</tr>
+						</thead>
+						<tbody>
+							<c:set var="num" value="0" />
+							<c:forEach var="testHistory" items="${testHistoryList}">
+								<c:set var="num" value="${num+1}" />
+								<tr>
+									<th scope="row">${num}</th>
+									<td>${testHistory.test.name}</td>
+									<td><c:choose>
+											<c:when test="${testHistory.testResult=='0'}">
+												<div>
+													<div
+														class="progress-bar progress-bar-danger progress-bar-striped"
+														role="progressbar"
+														aria-valuenow="${testHistory.testResult}"
+														aria-valuemin="0" aria-valuemax="100" style="width: 100%">${testHistory.testResult}%
+														Success</div>
+												</div>
+											</c:when>
+											<c:otherwise>
+												<div>
+													<div
+														class="progress-bar progress-bar-success progress-bar-striped"
+														role="progressbar"
+														aria-valuenow="${testHistory.testResult}"
+														aria-valuemin="0" aria-valuemax="100"
+														style="width: ${testHistory.testResult}%">${testHistory.testResult}%
+														Success</div>
+												</div>
+											</c:otherwise>
+										</c:choose>
+									<td>${testHistory.timeTestPass}</td>
+									<td>${testHistory.test.subject.subject}</td>
+									<td>${testHistory.test.difficulty}</td>
+								</tr>
+							</c:forEach>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+
+	<div>
+		<div class="panel panel-primary">
+			<div class="panel-heading">Success history of all the tests!</div>
+			<div class="panel-body">
+				<div class="well well-lg">
+					<table class="table">
+						<thead class="thead-default">
+							<tr>
+								<th>#</th>
+								<th><fmt:message key="difficulty" /></th>
+								<th>Succesfull rate!</th>
+								<th>Tests passed amount!</th>
+							</tr>
+						</thead>
+						<tbody>
+							<c:set var="num" value="0" />
+							<c:forEach var="successRate" items="${totalSuccesRate}">
+								<c:set var="num" value="${num+1}" />
+								<tr>
+									<th scope="row">${num}</th>
+									<td>${ successRate.difficulty}</td>
+									<td>${ successRate.successRate}%</td>
+									<td>${ successRate.testsPassedAmount}</td>
+								</tr>
+							</c:forEach>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+	<div class="well">
+		<div class="panel panel-info">
+			<ul class="list-group">
+				<li class="list-group-item"><a
+					class="btn btn-primary btn-lg btn-block"
+					href="${pageContext.request.contextPath}/" role="button">Main
+						page</a></li>
+
+				<c:if test="${user_role.roleName == 'admin'}">
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h3 class="panel-title">ADMIN OPTIONS</h3>
+						</div>
+						<div class="well well-lg">
+							<ul>
+								<li class="list-group-item"><a
+									class="btn btn-warning btn-lg btn-block"
+									href="${pageContext.request.contextPath}/Controller?command=testsModify"
+									role="button"> Work with tests </a></li>
+								<li class="list-group-item"><a
+									class="btn btn-warning btn-lg btn-block"
+									href="${pageContext.request.contextPath}/Controller?command=usersControl"
+									role="button">Work with users</a></li>
+							</ul>
+						</div>
+					</div>
+
+
+				</c:if>
+			</ul>
+		</div>
+	</div>
+
+</div>
+</div>
+
+<script>
+	$(document).ready(function() {
+		$('input:file').change(function() {
+			if ($(this).val()) {
+				$('input:submit').attr('disabled', false);
+			}
+		});
+	});
+</script>

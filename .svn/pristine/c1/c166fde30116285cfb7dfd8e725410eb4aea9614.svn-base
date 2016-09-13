@@ -1,0 +1,20 @@
+package ua.nure.efimov.summarytask4.constants;
+
+public enum PathConstants implements Meaningful {
+	PAGE_LOGIN("/login.jsp"), PAGE_ERROR_PAGE("/error_page.jsp"), MAIN_PAGE("/tests/main.jsp");
+
+	/**
+	 * Value of constant.
+	 */
+	private String value;
+
+	private PathConstants(String value) {
+		this.value = value;
+	}
+
+	@Override
+	public String getValue() {
+		return value;
+	}
+
+}

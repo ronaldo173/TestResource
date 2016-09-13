@@ -1,0 +1,25 @@
+package ua.nure.efimov.summarytask4.command;
+
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import ua.nure.efimov.summarytask4.exception.ApplicationException;
+
+public class StartTestCommand extends Command {
+	private static final long serialVersionUID = 3344184604393385687L;
+
+	@Override
+	public EntryPath execute(HttpServletRequest request, HttpServletResponse response)
+			throws IOException, ServletException, ApplicationException {
+
+		String testId = request.getParameter("testId");
+		request.getSession().setAttribute("testId", testId);
+		request.setAttribute("testStarted", true);
+
+		return new EntryPath("/", false);
+	}
+
+}

@@ -1,0 +1,110 @@
+package ua.nure.efimov.summarytask4.entity;
+
+import java.util.Date;
+
+import ua.nure.efimov.summarytask4.db.dao.Identified;
+
+public class TestHistory implements Identified<Integer> {
+	/**
+	 * SerialVersion UID.
+	 */
+	private static final long serialVersionUID = 3365008981744094718L;
+
+	private Integer id;
+
+	private Test test;
+	/**
+	 * Result of test passing in %. If test has 10 questions, 6 user answered
+	 * right -> 0.6 == 60%.
+	 */
+	private double testResult;
+
+	/**
+	 * Time of start passing test.
+	 */
+	private Date timeTestStart;
+	/**
+	 * Time of end passing test.
+	 */
+	private Date timeTestEnd;
+
+	@Override
+	public Integer getId() {
+		return id;
+	}
+
+	/**
+	 * @return the test
+	 */
+	public Test getTest() {
+		return test;
+	}
+
+	/**
+	 * @param test
+	 *            the test to set
+	 */
+	public void setTest(Test test) {
+		this.test = test;
+	}
+
+	/**
+	 * @return the testResult
+	 */
+	public double getTestResult() {
+		return testResult;
+	}
+
+	/**
+	 * @param testResult
+	 *            the testResult to set
+	 */
+	public void setTestResult(double testResult) {
+		this.testResult = testResult;
+	}
+
+	/**
+	 * @return the timeTestStart
+	 */
+	public Date getTimeTestStart() {
+		return timeTestStart;
+	}
+
+	/**
+	 * @param timeTestStart
+	 *            the timeTestStart to set
+	 */
+	public void setTimeTestStart(Date timeTestStart) {
+		this.timeTestStart = timeTestStart;
+	}
+
+	/**
+	 * @return the timeTestEnd
+	 */
+	public Date getTimeTestEnd() {
+		return timeTestEnd;
+	}
+
+	/**
+	 * @param timeTestEnd
+	 *            the timeTestEnd to set
+	 */
+	public void setTimeTestEnd(Date timeTestEnd) {
+		this.timeTestEnd = timeTestEnd;
+	}
+
+	/**
+	 * @param id
+	 *            the id to set
+	 */
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	@Override
+	public String toString() {
+		return "TestHistory [id=" + id + ", test=" + test + ", testResult=" + testResult + ", timeTestStart="
+				+ timeTestStart + ", timeTestEnd=" + timeTestEnd + "]";
+	}
+
+}

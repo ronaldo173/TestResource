@@ -1,0 +1,24 @@
+package ua.nure.efimov.summarytask4.authentication;
+
+import java.security.Principal;
+
+public class RolePrincipal implements Principal {
+	private String roleName;
+
+	/**
+	 * @param roleName
+	 */
+	public RolePrincipal(String roleName) {
+		this.roleName = roleName;
+	}
+
+	@Override
+	public String getName() {
+		return roleName;
+	}
+
+	public void setName(String roleName) {
+		this.roleName = roleName;
+	}
+
+}

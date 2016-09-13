@@ -1,0 +1,58 @@
+<%@ include file="/jspf/directive/taglib.jspf"%>
+<%@ include file="/jspf/directive/page_content_encoding.jspf"%>
+<c:set var="language"
+	value="${not empty param.language ? param.language : not empty language ? language : pageContext.request.locale.language}"
+	scope="session" />
+<fmt:setLocale value="${language}" />
+<fmt:setBundle basename="ua.nure.efimov.summarytask4.i18n.messages" />
+
+
+<%--=========================================================================== 
+This is the language choose part.
+===========================================================================--%>
+<nav class="navbar navbar-inverse">
+	<div class="container-fluid">
+
+		<form class="form-inline" role="form" action="Controller">
+			<input type="hidden" name="command" value="languageCommand" />
+			<ul class="nav navbar-nav">
+				<li><button type="submit" name="en"
+						class="btn btn-default btn-lg">
+						<span class="lang-sm lang-lbl" lang="en"></span>
+					</button></li>
+
+				<li><button type="submit" name="ru"
+						class="btn btn-default btn-lg">
+						<span class="lang-sm lang-lbl" lang="ru"></span>
+					</button></li>
+
+				<li><button type="submit" name="ua"
+						class="btn btn-default btn-lg">
+						<span class="lang-sm lang-lbl" lang="uk"></span>
+					</button></li>
+			</ul>
+		</form>
+
+		<ul class="nav navbar-nav navbar-right">
+			<li><div class="navbar-header">
+					<a class="navbar-brand">Current language</a>
+				</div></li>
+
+			<li><c:choose>
+					<c:when test="${language == 'ua' }">
+						<span class="lang-sm lang-lbl" lang="uk"></span>
+					</c:when>
+					<c:otherwise>
+						<span class="lang-sm lang-lbl" lang="${language }"></span>
+					</c:otherwise>
+				</c:choose></li>
+
+			<li><a
+				href="${pageContext.request.contextPath}/Controller?command=logoutCommand"><span
+					class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+		</ul>
+	</div>
+</nav>
+<%--=========================================================================== 
+Language choose part end.
+===========================================================================--%>

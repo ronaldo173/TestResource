@@ -1,0 +1,53 @@
+DROP DATABASE IF EXISTS tomcat_realm;
+CREATE DATABASE tomcat_realm;
+USE tomcat_realm;
+
+DROP TABLE IF EXISTS `users`;
+CREATE TABLE `users` (
+`id` int(11) NOT NULL auto_increment,
+`username` varchar(225) NOT NULL,
+`password` varchar(225) NOT NULL,
+PRIMARY KEY (`id`),
+UNIQUE KEY `unique_username` (`username`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for roles
+-- ----------------------------
+DROP TABLE IF EXISTS `roles`;
+CREATE TABLE `roles` (
+`id` int(11) NOT NULL auto_increment,
+`role` varchar(255) NOT NULL,
+`description` text,
+PRIMARY KEY (`id`),
+UNIQUE KEY `unique_role` (`role`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for users_roles
+-- ----------------------------
+DROP TABLE IF EXISTS `users_roles`;
+CREATE TABLE `users_roles` (
+`id` int(11) NOT NULL auto_increment,
+`username` varchar(225) NOT NULL,
+`role` varchar(255) NOT NULL,
+
+
+PRIMARY KEY (`id`),
+UNIQUE KEY `unique_username_and_role` (`username`,`role`),
+KEY `fk_roles_by_role` (`role`),
+CONSTRAINT `fk_roles_by_role` FOREIGN KEY (`role`) REFERENCES
+`roles` (`role`) ,
+CONSTRAINT `fk_users_by_username` FOREIGN KEY (`username`) REFERENCES
+`users` (`username`) 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+INSERT INTO roles (role) VALUES ('admin');
+INSERT INTO roles (role) VALUES ('user');
+INSERT INTO users (username, password) VALUES ('admin', '21232f297a57a5a743894a0e4a801fc3');
+INSERT INTO users (username, password) VALUES ('user1', '24c9e15e52afc47c225b757e7bee1f9d');
+INSERT INTO users_roles (username, role) VALUES ('admin','admin');
+INSERT INTO users_roles (username, role) VALUES ('user1','user');
+
+

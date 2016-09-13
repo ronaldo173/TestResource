@@ -1,0 +1,201 @@
+package ua.nure.efimov.summarytask4.db.dao.jdbc.impl;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import ua.nure.efimov.summarytask4.db.dao.GenericDao;
+import ua.nure.efimov.summarytask4.db.dao.Identified;
+import ua.nure.efimov.summarytask4.db.dao.PersistException;
+import ua.nure.efimov.summarytask4.db.dao.jdbc.AbstractJDBCDAO;
+import ua.nure.efimov.summarytask4.entity.Answer;
+import ua.nure.efimov.summarytask4.entity.Question;
+
+//TODO 15.08
+public class QuestionDaoImpl extends AbstractJDBCDAO<Question, Integer> {
+	private Connection connection;
+
+	public QuestionDaoImpl(Connection connection) {
+		super(connection);
+		this.connection = connection;
+	}
+
+	/**
+	 * For constraining acces to set id.
+	 * 
+	 * @author Alexandr Efimov
+	 *
+	 */
+	private class PersistQuestion extends Question {
+		private static final long serialVersionUID = 5670684664809654179L;
+
+		public void setId(int id) {
+			super.setId(id);
+		}
+	}
+
+	@Override
+	public String getSelectQuery() {
+		return "SELECT * FROM questions";
+	}
+
+	@Override
+	public String getCreateQuery() {
+		return "INSERT INTO questions (body) VALUES (?);";
+	}
+
+	@Override
+	public String getUpdateQuery() {
+		return "UPDATE questions SET body = ? WHERE id = ?;";
+	}
+
+	@Override
+	public String getDeleteQuery() {
+		return "DELETE FROM questions WHERE id= ?;";
+	}
+
+	@Override
+	protected List<Question> parseResSet(ResultSet rs) throws PersistException {
+		List<Question> questionsList = new ArrayList<>();
+		try {
+			// get all answers
+			GenericDao<? extends Identified<Integer>, Integer> answerDaoImpl = DaoFactoryMySqlImpl.getInstance()
+					.getDao(connection, Answer.class);
+			List<? extends Identified<Integer>> answersList = answerDaoImpl.getAll();
+
+			while (rs.next()) {
+				PersistQuestion question = new PersistQuestion();
+				question.setId(rs.getInt("id"));
+				question.setBody(rs.getString("body"));
+
+				List<Answer> questionAnswers = new ArrayList<>();
+				Iterator<? extends Identified<Integer>> iterAllAnswers = answersList.iterator();
+				while (iterAllAnswers.hasNext()) {
+					Answer nextAnswer = (Answer) iterAllAnswers.next();
+					if (nextAnswer.getQuestionId() == question.getId()) {
+						questionAnswers.add(nextAnswer);
+						iterAllAnswers.remove();
+					}
+				}
+
+				question.setAnswers(questionAnswers);
+				questionsList.add(question);
+			}
+		} catch (Exception e) {
+			throw new PersistException(e);
+		}
+		return questionsList;
+	}
+
+	@Override
+	protected void prepareStForUpdateSetArgs(PreparedStatement statement, Question question) throws PersistException {
+		/**
+		 * "UPDATE questions SET body = ? WHERE id = ?;"
+		 */
+		try {
+			statement.setString(1, question.getBody());
+
+			statement.setInt(2, question.getId());
+		} catch (SQLException e) {
+			throw new PersistException(e);
+		}
+	}
+
+	@Override
+	protected void prepareStatementForInsert(PreparedStatement statement, Question question) throws PersistException {
+		/**
+		 * "INSERT INTO questions (body) VALUES (?);"
+		 */
+		try {
+			statement.setString(1, question.getBody());
+		} catch (SQLException e) {
+			throw new PersistException(e);
+		}
+	}
+
+	/**
+	 * Using super method removes current row in table. And before that removes
+	 * answers from child table.
+	 * 
+	 * Removes quention -> removes question and it's answers from 'answers'
+	 * table.
+	 * 
+	 * @param question
+	 *            is question for removing
+	 * @throws PersistException
+	 *             if smth happened
+	 */
+	@Override
+	public void delete(Question question) throws PersistException {
+
+		// now remove answers
+		List<Answer> answers = question.getAnswers();
+		AnswerDaoImpl answerDaoImpl = new AnswerDaoImpl(connection);
+		for (Answer answer : answers) {
+			answerDaoImpl.delete(answer);
+		}
+		// and remove question
+		super.delete(question);
+	}
+
+	/**
+	 * Using super method add question to current 'questions' table.
+	 * 
+	 * Then add question.answers to 'answers' table
+	 * 
+	 * @param question
+	 *            is question for add
+	 * @throws PersistException
+	 *             if smth happened
+	 */
+	@Override
+	public Question persist(Question question) throws PersistException {
+		Question persistedQuestion = super.persist(question);
+
+		// now add answers
+		List<Answer> answers = question.getAnswers();
+		List<Answer> persistedAnswers;
+		persistedQuestion.setAnswers(answers);
+
+		if (answers != null && !answers.isEmpty()) {
+			AnswerDaoImpl answerDaoImpl = new AnswerDaoImpl(connection);
+			persistedAnswers = new ArrayList<>();
+
+			for (Answer answer : answers) {
+				answer.setQuestionId(persistedQuestion.getId());
+				Answer persistedAnswer = answerDaoImpl.persist(answer);
+				persistedAnswers.add(persistedAnswer);
+			}
+			persistedQuestion.setAnswers(persistedAnswers);
+		}
+
+		return persistedQuestion;
+	}
+
+	/*
+	 * Update question by adding new answers.
+	 * 
+	 * @see
+	 * ua.nure.efimov.summarytask4.db.dao.jdbc.AbstractJDBCDAO#update(ua.nure.
+	 * efimov.summarytask4.db.dao.Identified)
+	 */
+	@Override
+	public void update(Question question) throws PersistException {
+
+		// now add answers
+		List<Answer> answers = question.getAnswers();
+
+		if (answers != null && !answers.isEmpty()) {
+			AnswerDaoImpl answerDaoImpl = new AnswerDaoImpl(connection);
+
+			for (Answer answer : answers) {
+				answerDaoImpl.persist(answer);
+			}
+		}
+	}
+
+}

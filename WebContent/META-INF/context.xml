@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context antiJARLocking="true" path="/SummaryTask4">
+	<!-- works! -->
+	<Resource name="jdbc/database" type="javax.sql.DataSource"
+		factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"
+		driverClassName="com.mysql.jdbc.Driver"
+		url="jdbc:mysql://localhost:3306/testing?useSSL=false"
+		username="root" password="root" maxActive="100" maxIdle="20" maxWait="10000"
+		auth="Container" />
+
+
+	<Realm className="org.apache.catalina.realm.JDBCRealm"
+		driverName="com.mysql.jdbc.Driver"
+		connectionURL="jdbc:mysql://localhost:3306/testing?user=root&amp;password=root"
+		userTable="users" userNameCol="login" userCredCol="password"
+		userRoleTable="users_roles" roleNameCol="role" digest="MD5" />
+
+</Context>

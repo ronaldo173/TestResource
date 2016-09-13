@@ -1,0 +1,9 @@
+<!-- Page Content -->
+<%@ include file="/jspf/directive/taglib.jspf"%>
+
+<div id="page-content-wrapper">
+<i>Pass test: "${testId}"</i>
+</div>
+
+
+</div>

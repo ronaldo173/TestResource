@@ -1,0 +1,61 @@
+<!-- Page Content -->
+<%@ include file="/jspf/directive/taglib.jspf"%>
+
+<div class="container-fluid xyz">
+	<div class="row">
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				<p>
+					<fmt:message key="tests" />
+					<c:choose>
+						<c:when test="${empty subjectById}">
+      							<fmt:message key="all" />.
+   							</c:when>
+						<c:otherwise>
+      							  <fmt:message key="subject" /> - ${subjectById.subject}.
+  							</c:otherwise>
+					</c:choose>
+				</p>
+			</div>
+			<table class="table">
+				<thead>
+					<tr class="danger">
+						<th>#</th>
+						<th><fmt:message key="test_name" /></th>
+						<th><fmt:message key="subject" /></th>
+						<th><fmt:message key="difficulty" /></th>
+						<th><fmt:message key="questions_amount" /></th>
+						<th><fmt:message key="description" /></th>
+						<th><fmt:message key="add_date" /></th>
+						<th><fmt:message key="pass_time" /></th>
+						<th>---</th>
+					</tr>
+				</thead>
+				<tbody>
+					<c:set var="num" value="0" />
+					<c:forEach var="test" items="${tests}">
+						<c:set var="num" value="${num+1}" />
+						<tr>
+							<th scope="row"><c:out value="${num}" /></th>
+							<td>${test.name}</td>
+							<td>${test.subject.subject}</td>
+							<td>${test.difficulty}</td>
+							<td>${fn:length(test.questions)}</td>
+							<td>${test.description}</td>
+							<td>${test.addDate}</td>
+							<td>${test.passTime}</td>
+							<td>
+								<form id="tests" action="Controller">
+									<input type="hidden" name="command" value="startTest" /> <input
+										type="hidden" name="testId" value="${test.id}" /> <input
+										value=<fmt:message key="test_start" /> type="submit" />
+								</form>
+							</td>
+						</tr>
+					</c:forEach>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+</div>

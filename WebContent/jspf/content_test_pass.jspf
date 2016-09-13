@@ -1,0 +1,139 @@
+<!-- Page Content -->
+<%@ include file="/jspf/directive/taglib.jspf"%>
+
+<script language="javascript">
+	var secondsFromSession = '${sessionScope.testPassTime}';
+
+	var tim;
+	var min = Math.floor(secondsFromSession / 60);
+	var sec = secondsFromSession % 60;
+
+	function customSubmit(someValue) {
+		document.questionForm.submit();
+	}
+
+	function examTimer() {
+		if (parseInt(sec) > 0) {
+
+			document.getElementById("showtime").innerHTML = "Time left: " + min
+					+ " : " + sec;
+			sec = parseInt(sec) - 1;
+			tim = setTimeout("examTimer()", 1000);
+		} else {
+
+			if (parseInt(min) == 0 && parseInt(sec) == 0) {
+				document.getElementById("showtime").innerHTML = "Time left: "
+						+ min + " : " + sec;
+				document.questionForm.submit();
+
+			}
+
+			if (parseInt(sec) == 0) {
+				document.getElementById("showtime").innerHTML = "Time left: "
+						+ min + " : " + sec;
+				min = parseInt(min) - 1;
+				sec = 59;
+				tim = setTimeout("examTimer()", 1000);
+			}
+
+		}
+	}
+
+	window.onbeforeunload = function() {
+		return "If you reload this page, your previous action will be repeated";
+	}
+</script>
+
+<div class="container-fluid xyz">
+	<div class="row">
+		<div class="col-lg-12">
+
+			<nav class="navbar navbar-inverse navbar-fixed-bottom">
+				<div class="container-fluid">
+					<div class="navbar-header">
+						<a class="navbar-brand">Passing the test: ${testName}</a>
+					</div>
+					<ul class="nav navbar-nav navbar-right">
+
+						<li class="active"><a
+							href="${pageContext.request.contextPath}\Controller?command=interruptTest"
+							onclick="return confirm('Are you sure want to interrupt the test?')"><span
+								class="glyphicon glyphicon-remove-sign"></span> Stop the test! <span
+								class="glyphicon glyphicon-remove-sign"></span></a></li>
+
+						<li class="active"><span class="glyphicon glyphicon-time"></span>
+							<div id="showtime"></div></li>
+						<li></li>
+					</ul>
+				</div>
+			</nav>
+
+			<form method="post" name="questionForm"
+				action="${pageContext.request.contextPath}\Controller">
+				<input type="hidden" name="command" value="resultCheck" />
+
+				<div class="container-fluid xyz">
+					<div class="row">
+						<div class="col-lg-12">
+							<div class="panel-body">
+								<div class="well well-lg">
+
+									<table border="1" class="table">
+										<caption><fmt:message key="test" /> ${testName}</caption>
+										<thead>
+											<tr>
+												<th>#</th>
+												<th><fmt:message key="question" /></th>
+												<th><fmt:message key="answer" /></th>
+											</tr>
+										</thead>
+										<tbody>
+											<c:set var="num" value="0" />
+											<c:forEach var="question" items="${questions}">
+												<c:set var="num" value="${num+1}" />
+												<tr>
+													<th rowspan="${fn:length(question.answers) + 1}"><c:out
+															value="${num}" /></th>
+													<td colspan="2" class="info">${question.body}</td>
+												</tr>
+												<c:forEach var="answer" items="${question.answers}">
+													<tr>
+														<td>${answer.body}</td>
+
+														<td>
+
+															<div class="funkyradio">
+																<div class="funkyradio-success">
+																	<input type="checkbox"
+																		name="Answer_aId_${answer.id}_qId_${answer.questionId}"
+																		id="checkbox_${answer.id}" /> <label
+																		for="checkbox_${answer.id}">${answer.variant }</label>
+																</div>
+															</div>
+														</td>
+
+													</tr>
+
+												</c:forEach>
+
+											</c:forEach>
+										</tbody>
+									</table>
+
+									<button type="submit"
+										onclick="window.onbeforeunload=function(){null}"
+										class="btn btn-primary btn-lg btn-block"
+										onclick="customSubmit()"><fmt:message key="check_result" /></button>
+
+								</div>
+							</div>
+						</div>
+					</div>
+			</form>
+
+		</div>
+	</div>
+</div>
+
+</div>
+

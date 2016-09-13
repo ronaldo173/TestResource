@@ -1,0 +1,131 @@
+drop database if exists `testing` ;
+
+create database  if not exists `testing` default charset `utf8`;
+use `testing`;
+
+-- ----------------------------
+-- Table structure for questions
+-- ----------------------------
+CREATE TABLE questions
+(
+    id INT(11) auto_increment PRIMARY KEY NOT NULL,
+    body TEXT NOT NULL
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for answers
+-- ----------------------------
+CREATE TABLE answers
+(
+    id INT(11) auto_increment PRIMARY KEY NOT NULL,
+    variant VARCHAR(1) NOT NULL,
+    body TEXT NOT NULL,
+    is_correct TINYINT(1) DEFAULT '0',
+    question_id INT(11) NOT NULL,
+    CONSTRAINT answers_question_id FOREIGN KEY (question_id) REFERENCES questions (id)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for subjects
+-- ----------------------------
+CREATE TABLE subjects
+(
+    id INT(11) auto_increment PRIMARY KEY NOT NULL,
+    subject VARCHAR(255) NOT NULL,
+    UNIQUE KEY `subjects_subject` (`subject`)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for tests
+-- ----------------------------
+CREATE TABLE tests
+(
+    id INT(11) auto_increment PRIMARY KEY NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    subject_id INT(11) NOT NULL,
+    description VARCHAR(512),
+    difficulty ENUM('1', '2', '3', '4', '5') NOT NULL,
+    add_date DATE NOT NULL,
+    -- pass_time of test in seconds
+    pass_time INT(11) NOT NULL,
+    CONSTRAINT tests_subject_id FOREIGN KEY (subject_id) REFERENCES subjects (id)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for users
+-- ----------------------------
+CREATE TABLE users
+(
+    id INT(11) auto_increment PRIMARY KEY NOT NULL,
+    login varchar(225) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    first_name VARCHAR(25),
+    last_name VARCHAR(25),
+    email VARCHAR(50) NOT NULL,
+    is_verified TINYINT(1) DEFAULT '0',
+    is_banned TINYINT(1) DEFAULT '0',
+    photo BLOB,
+    UNIQUE KEY `unique_login` (`login`)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for tests history
+-- ----------------------------
+CREATE TABLE tests_history
+(
+    id INT(11) auto_increment PRIMARY KEY NOT NULL,
+    test_id INT(11) NOT NULL,
+    test_result tinyint NOT NULL,
+    time_test_start datetime not null,
+    time_test_end datetime not null,
+    user_id INT(11) NOT NULL,
+    CONSTRAINT tests_history_user_id FOREIGN KEY (user_id) REFERENCES users (id),
+    CONSTRAINT tests_history_test_id FOREIGN KEY (test_id) REFERENCES tests (id)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for tests questions
+-- ----------------------------
+CREATE TABLE test_questions
+(
+    test_id INT(11),
+    question_id INT(11),
+    CONSTRAINT test_questions_question_id FOREIGN KEY (question_id) REFERENCES questions (id),
+    CONSTRAINT test_questions_test_id FOREIGN KEY (test_id) REFERENCES tests (id)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+-- ----------------------------
+-- Table structure for roles
+-- ----------------------------
+CREATE TABLE roles (
+id int(11) NOT NULL auto_increment,
+role varchar(50) NOT NULL,
+description text,
+PRIMARY KEY (`id`),
+UNIQUE KEY `unique_role` (`role`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+-- ----------------------------
+-- Table structure for users_roles
+-- ----------------------------
+CREATE TABLE `users_roles` (
+`id` int(11) NOT NULL auto_increment,
+`login` varchar(225) NOT NULL,
+`role` varchar(255) NOT NULL,
+PRIMARY KEY (`id`),
+UNIQUE KEY `unique_login_and_role` (`login`,`role`),
+KEY `fk_roles_by_role` (`role`),
+CONSTRAINT `fk_roles_by_role` FOREIGN KEY (`role`) REFERENCES
+`roles` (`role`) ,
+CONSTRAINT `fk_users_by_login` FOREIGN KEY (`login`) REFERENCES
+`users` (`login`) 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+CREATE INDEX tests_history_test_id ON tests_history (test_id);
+CREATE INDEX tests_history_user_id ON tests_history (user_id);
+CREATE INDEX test_questions_question_id ON test_questions (question_id);
+CREATE INDEX test_questions_test_id ON test_questions (test_id);
+

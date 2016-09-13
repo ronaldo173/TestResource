@@ -1,0 +1,74 @@
+<%@ include file="/jspf/directive/taglib.jspf"%>
+<%@ include file="/jspf/directive/page_content_encoding.jspf"%>
+<nav class="navbar navbar-default no-margin">
+	<div class="navbar-header fixed-brand">
+		<button type="button" class="navbar-toggle collapsed"
+			data-toggle="collapse" id="menu-toggle">
+			<span class="glyphicon glyphicon-th-large" aria-hidden="true"></span>
+		</button>
+		<a class="navbar-brand"
+			href="${pageContext.request.contextPath}/Controller?command=subjectSelectCommand&subjectsAll=true"><i
+			class="fa fa-rocket fa-4"></i> Test resource</a>
+	</div>
+	<!-- navbar-header-->
+
+	<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+		<ul class="nav navbar-nav">
+			<li class="active"><button class="navbar-toggle collapse in"
+					data-toggle="collapse" id="menu-toggle-2">
+					<span class="glyphicon glyphicon-th-large" aria-hidden="true"></span>
+				</button></li>
+		</ul>
+	</div>
+	<!-- bs-example-navbar-collapse-1 -->
+</nav>
+<div id="wrapper">
+	<!-- Sidebar -->
+	<div id="sidebar-wrapper">
+		<ul class="sidebar-nav nav-pills nav-stacked">
+
+			<li class="active"><a
+				href="${pageContext.request.contextPath}/Controller?command=subjectSelectCommand&subjectsAll=true"><span
+					class="fa-stack fa-lg pull-left"> <i
+						class="fa fa-dashboard fa-stack-1x "></i></span> <fmt:message
+						key="subjects" /></a>
+				<ul class="nav-pills nav-stacked" style="list-style-type: yes;">
+					<!-- SUBJECTS -->
+
+					<c:choose>
+						<c:when test="${empty  subjectById}">
+							<jsp:include page="/SubjectsLoad"></jsp:include>
+							<c:forEach items="${subjects}" var="subject">
+								<li><a
+									href="${pageContext.request.contextPath}/Controller?command=subjectSelectCommand&subj_id=${subject.id}">
+										${subject.subject}</a></li>
+
+							</c:forEach>
+						</c:when>
+
+						<c:otherwise>
+							<li><a
+								href="${pageContext.request.contextPath}/Controller?command=subjectSelectCommand&subjectsAll=true">
+									Back</a></li>
+							<li class="activeSubMenu">${subjectById.subject}</li>
+						</c:otherwise>
+					</c:choose>
+
+				</ul></li>
+
+
+			<li><a
+				href="${pageContext.request.contextPath}/Controller?command=myPage"><span
+					class="fa-stack fa-lg pull-left"><i
+						class="fa fa-wrench fa-stack-1x "></i></span> <fmt:message key="my_page" /></a></li>
+		</ul>
+	</div>
+	<!-- /#page-content-wrapper -->
+	<!-- /#wrapper -->
+	<!-- jQuery -->
+	<script
+		src="${pageContext.request.contextPath}/resources/js/jquery-1.11.2.min.js"></script>
+	<script
+		src="${pageContext.request.contextPath}/resources/js/bootstrap.min.js"></script>
+	<script
+		src="${pageContext.request.contextPath}/resources/js/sidebar_menu.js"></script>

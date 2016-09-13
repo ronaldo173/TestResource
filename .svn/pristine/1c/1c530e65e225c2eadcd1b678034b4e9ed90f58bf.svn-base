@@ -1,0 +1,23 @@
+<%@ include file="/jspf/directive/page_content_encoding.jspf"%>
+<%@ include file="/jspf/directive/taglib.jspf"%>
+<html>
+<head>
+<c:set var="title" value="Tests resource" />
+<%@ include file="/jspf/head.jspf"%>
+</head>
+<body>
+	<%@ include file="/jspf/header_languages_part.jspf"%>
+	<%@ include file="/jspf/left_menu.jspf"%>
+
+	<c:choose>
+		<c:when test="${empty testStarted}">
+			<%@ include file="/jspf/content.jspf"%>
+		</c:when>
+
+		<c:otherwise>
+			<%@ include file="/jspf/content_test_pass.jspf"%>
+		</c:otherwise>
+	</c:choose>
+
+</body>
+</html>

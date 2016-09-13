@@ -1,0 +1,136 @@
+package ua.nure.efimov.summarytask4.db.dao.jdbc.impl;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import ua.nure.efimov.summarytask4.db.dao.PersistException;
+import ua.nure.efimov.summarytask4.db.dao.jdbc.AbstractJDBCDAO;
+import ua.nure.efimov.summarytask4.entity.Answer;
+
+public class AnswerDaoImpl extends AbstractJDBCDAO<Answer, Integer> {
+	private Connection connection;
+
+	/**
+	 * For constraining access to set id.
+	 * 
+	 * @author Alexandr Efimov
+	 *
+	 */
+	private class PersistAnswer extends Answer {
+		private static final long serialVersionUID = -3459905484854439277L;
+
+		public void setId(int id) {
+			super.setId(id);
+		}
+	}
+
+	public AnswerDaoImpl(Connection connection) {
+		super(connection);
+		this.connection = connection;
+	}
+
+	@Override
+	public String getSelectQuery() {
+		return "SELECT * FROM testing.answers";
+	}
+
+	@Override
+	public String getCreateQuery() {
+		return "INSERT INTO testing.answers (variant, body, is_correct, question_id) VALUES (?, ?, ?, ?);";
+	}
+
+	@Override
+	public String getUpdateQuery() {
+		return "UPDATE testing.answers SET variant = ?, body  = ?, is_correct = ?, question_id = ? WHERE id = ?;";
+	}
+
+	@Override
+	public String getDeleteQuery() {
+		return "DELETE FROM testing.answers WHERE variant= ? AND body = ? AND question_id = ?;";
+	}
+
+	@Override
+	protected List<Answer> parseResSet(ResultSet rs) throws PersistException {
+		List<Answer> result = new ArrayList<>();
+		try {
+			while (rs.next()) {
+				PersistAnswer answer = new PersistAnswer();
+				answer.setId(rs.getInt("id"));
+				answer.setVariant(rs.getString("variant").charAt(0));
+				answer.setBody(rs.getString("body"));
+				answer.setCorrect(rs.getBoolean("is_correct"));
+				// set id of questions, one-to-many relation
+				answer.setQuestionId(rs.getInt("question_id"));
+
+				result.add(answer);
+			}
+		} catch (Exception e) {
+			throw new PersistException(e);
+		}
+		return result;
+	}
+
+	@Override
+	protected void prepareStForUpdateSetArgs(PreparedStatement statement, Answer answer) throws PersistException {
+		/**
+		 * "UPDATE answers SET variant = ?, body = ?, is_correct = ?,
+		 * question_id = ? WHERE id = ?;" ;
+		 */
+
+		try {
+			statement.setString(1, String.valueOf(answer.getVariant()));
+			statement.setString(2, answer.getBody());
+			statement.setBoolean(3, answer.isCorrect());
+			statement.setInt(4, answer.getQuestionId());
+
+			statement.setInt(5, answer.getId());
+		} catch (SQLException e) {
+			throw new PersistException(e);
+		}
+	}
+
+	@Override
+	protected void prepareStatementForInsert(PreparedStatement statement, Answer answer) throws PersistException {
+		/**
+		 * "INSERT INTO answers (variant, body, is_correct, question_id) \n" +
+		 * "VALUES (?, ?, ?, ?);"
+		 */
+		try {
+			statement.setString(1, String.valueOf(answer.getVariant()));
+			statement.setString(2, answer.getBody());
+			statement.setBoolean(3, answer.isCorrect());
+			statement.setInt(4, answer.getQuestionId());
+
+		} catch (SQLException e) {
+			throw new PersistException(e);
+		}
+	}
+
+	/**
+	 * Delete answer object by all fiels except id. For correct removing via
+	 * jdbc one to many own realization.
+	 */
+	@Override
+	public void delete(Answer answer) throws PersistException {
+		/*
+		 * DELETE FROM answers WHERE variant='d' AND body='TESTDELETE' AND
+		 * question_id =1;
+		 */
+		String sql = getDeleteQuery();
+
+		try (PreparedStatement statement = connection.prepareStatement(sql)) {
+			statement.setString(1, String.valueOf(answer.getVariant()));
+			statement.setString(2, answer.getBody());
+			statement.setInt(3, answer.getQuestionId());
+
+			statement.executeUpdate();
+		} catch (Exception e) {
+			throw new PersistException(e);
+		}
+	}
+
+}

@@ -1,0 +1,111 @@
+<!-- Page Content -->
+<%@ include file="/jspf/directive/taglib.jspf"%>
+
+<div class="panel panel-primary well">
+	<div class="panel-body">
+		<table border="1" class="table">
+			<caption><strong><fmt:message key="test_results" /></strong> </caption>
+
+			<c:set var="number" value="0" />
+			<c:forEach var="resultTestBeans" items="${listResultTestBeans}">
+				<c:set var="number" value="${number+1}" />
+
+				<tr>
+					<td rowspan="${greaterAmountOfAnswers +2}">${number}</td>
+					<td colspan="2" class="info">${resultTestBeans.question.body}</td>
+				</tr>
+
+				<tr>
+					<td><strong><fmt:message key="answered" /></strong></td>
+					<td><strong><fmt:message key="correct" /></strong></td>
+				</tr>
+				<c:forEach var="i" begin="0" end="${greaterAmountOfAnswers -1}"
+					varStatus="loop">
+					<tr>
+
+						<c:choose>
+							<c:when test="${ empty resultTestBeans.answeredList[loop.index]}">
+							</c:when>
+							<c:when
+								test="${not resultTestBeans.answeredList[loop.index].isCorrect}">
+								<td class="danger">
+							</c:when>
+							<c:when
+								test="${resultTestBeans.answeredList[loop.index].isCorrect}">
+								<td class="success">
+							</c:when>
+
+						</c:choose>
+
+
+
+						<c:out value="${resultTestBeans.answeredList[loop.index].body }" />
+						</td>
+						<td><c:out
+								value="${resultTestBeans.correctList[loop.index].body }" /></td>
+					</tr>
+				</c:forEach>
+			</c:forEach>
+
+		</table>
+	</div>
+</div>
+
+
+
+
+<div class="panel panel-default">
+	<!-- Default panel contents -->
+	<div class="panel-heading">
+		<div class="well">
+			<div class="alert alert-success" role="alert">
+				<h3><fmt:message key="well_done_test_passed" /></h3>
+			</div>
+			<div id="myProgress">
+				<div id="myBar" class="progress progress-striped progress-success">
+					<div id="label">0%</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="well well-sm">
+		<fmt:message key="total_result" />:
+		<div class="panel-body">
+
+			<!-- List group -->
+			<ul class="list-group">
+				<li class="list-group-item"><p><fmt:message key="test_name" /> ${testName}</p></li>
+				<li class="list-group-item"><p><fmt:message key="questions" />
+						${fn:length(listResultTestBeans) }</p></li>
+				<li class="list-group-item"><p><fmt:message key="correct" />:
+						${result_correct_answers }</p></li>
+				<li class="list-group-item"><p><fmt:message key="success" />:
+						${result_correct_answers_percents } %</p></li>
+			</ul>
+		</div>
+	</div>
+</div>
+
+
+
+<script>
+	function move() {
+		var elem = document.getElementById("myBar");
+		var width = 3;
+		var id = setInterval(frame, 3);
+		function frame() {
+			var max = '${sessionScope.result_correct_answers_percents}';
+			if (width >= max) {
+				clearInterval(id);
+			} else {
+				width++;
+				elem.style.width = width + '%';
+				document.getElementById("label").innerHTML = width * 1 + ' %';
+			}
+		}
+	}
+</script>
+
+
+</div>
+

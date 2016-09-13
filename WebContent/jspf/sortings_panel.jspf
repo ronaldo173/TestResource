@@ -1,0 +1,39 @@
+<!-- Page Content -->
+<%@ include file="/jspf/directive/taglib.jspf"%>
+
+<div class="panel panel-default">
+	<div class="panel-body">
+
+		<c:if test="${empty sort_types_list}">
+			<jsp:include page="/SortTypesLoadServlet"></jsp:include>
+		</c:if>
+
+		<form method="post"
+			action="${pageContext.request.contextPath}\Controller">
+			<input type="hidden" name="command" value="changeSortType" />
+
+			<div class="form-group">
+				<label for="sel1"><fmt:message
+						key="sort_type" /> </label> <select class="form-control"
+					id="sel1" onchange="this.form.submit()" name="sortType">
+
+					<c:forEach var="sortBean" items="${sort_types_list}">
+
+						<c:if test="${not sortBean.isSelected}">
+							<option value="${sortBean.sortingName }"><fmt:message
+									key="${sortBean.sortingName }" /></option>
+						</c:if>
+						<c:if test="${sortBean.isSelected}">
+							<option value="${sortBean.sortingName }" selected="selected"><fmt:message
+									key="${sortBean.sortingName }" /></option>
+						</c:if>
+
+
+					</c:forEach>
+
+				</select>
+			</div>
+
+		</form>
+	</div>
+</div>

@@ -1,0 +1,59 @@
+<!-- Page Content -->
+<%@ include file="/jspf/directive/taglib.jspf"%>
+
+<div id="page-content-wrapper">
+	<div class="container-fluid xyz">
+		<div class="row">
+			<div class="col-lg-12">
+				<h1>${subjectById.subject}</h1>
+				<p>Content</p>
+
+
+
+
+				<table id="tests" class="table">
+					<thead>
+						<tr class="danger">
+							<th>#</th>
+							<th>Name</th>
+							<th>Subject</th>
+							<th>Difficulty</th>
+							<th>Questions amount</th>
+							<th>Description</th>
+							<th>Add date</th>
+							<th>Pass time</th>
+							<th>---</th>
+						</tr>
+					</thead>
+					<tbody>
+						<c:set var="num" value="0" />
+						<c:forEach var="test" items="${tests}">
+							<c:set var="num" value="${num+1}" />
+							<tr >
+								<th scope="row"><c:out value="${num}" /></th>
+								<td>${test.name}</td>
+								<td>${test.subject.subject}</td>
+								<td>${test.difficulty}</td>
+								<td>${fn:length(test.questions)}</td>
+								<td>${test.description}</td>
+								<td>${test.addDate}</td>
+								<td>${test.passTime}</td>
+								<td>
+									<form id="tests" action="Controller">
+										<input type="hidden" name="command" value="startTest" /> <input
+											type="hidden" name="testId" value="${test.id}" /> <input
+											value="START" type="submit" />
+									</form>
+								</td>
+							</tr>
+						</c:forEach>
+					</tbody>
+				</table>
+
+			</div>
+		</div>
+	</div>
+</div>
+
+
+</div>

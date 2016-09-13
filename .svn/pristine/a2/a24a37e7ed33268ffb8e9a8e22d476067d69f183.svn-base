@@ -1,0 +1,26 @@
+<%@ include file="/jspf/directive/page_content_encoding.jspf"%>
+<%@ include file="/jspf/directive/taglib.jspf"%>
+
+<head>
+
+<title>${title}</title>
+
+<%--=========================================================================== 
+Bind CSS document.
+===========================================================================--%>
+<link href="${pageContext.request.contextPath}/resources/css/bootstrap.min.css" rel="stylesheet">
+<link href="${pageContext.request.contextPath}/resources/css/languages.min.css" rel="stylesheet" />
+<link href="${pageContext.request.contextPath}/resources/css/simple-sidebar.css" rel="stylesheet">
+
+<link href="${pageContext.request.contextPath}/resources/font-awesome-4.3.0/css/font-awesome.min.css"
+	rel="stylesheet">
+	
+	  
+
+<%--=========================================================================== 
+If you define http-equiv attribute, set the content type and the charset the same
+as you set them in a page directive.
+===========================================================================--%>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+</head>
